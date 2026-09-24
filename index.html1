@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ulasan Pelanggan</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 420px;
+      padding: 35px 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .rating-container {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      direction: rtl; /* Untuk efek hover bintang dari kanan ke kiri */
+    }
+
+    .star {
+      font-size: 42px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: transform 0.2s, color 0.2s;
+      user-select: none;
+    }
+
+    .star:hover,
+    .star:hover ~ .star {
+      color: #fbbf24;
+      transform: scale(1.15);
+    }
+
+    .helper-text {
+      font-size: 13px;
+      color: #94a3b8;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <span class="badge">Feedback Pelanggan</span>
+    <!-- Nama toko akan otomatis dimuat dari script di bawah -->
+    <h1 id="display-business">Nama Bisnis Anda</h1>
+    <p class="subtitle">Seberapa puas Anda dengan pelayanan kami hari ini?</p>
+
+    <!-- Pilihan Rating Bintang -->
+    <div class="rating-container">
+      <span class="star" data-value="5">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="1">★</span>
+    </div>
+
+    <div class="helper-text" id="helper-text">Pilih bintang untuk memberikan ulasan</div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURASI KLIEN (Ubah data bisnis klien di bawah ini secara manual)
+    // =========================================================================
+    const config = {
+      businessName: "Kopi Sore ",      // Ganti dengan Nama Toko / Bisnis Klien
+      waNumber: "6287772764895",               // Ganti dengan No WA Admin (Gunakan 62, tanpa + / 0)
+      gmapsUrl: "https://search.google.com/local/writereview?placeid=ChIJrW-NvC1Zei4RzqNM2Q-2L_w"     // Ganti dengan Link Google Review Maps Klien
+    };
+    // =========================================================================
+
+    // Tampilkan Nama Bisnis di Halaman Web
+    document.getElementById('display-business').innerText = config.businessName;
+
+    // Logika Efek Teks Hover Bintang
+    const stars = document.querySelectorAll('.star');
+    const helperText = document.getElementById('helper-text');
+
+    const ratingsText = {
+      1: "Sangat Kecewa",
+      2: "Kurang Puas",
+      3: "Cukup",
+      4: "Puas",
+      5: "Sangat Puas!"
+    };
+
+    stars.forEach(star => {
+      star.addEventListener('mouseover', (e) => {
+        const val = e.target.getAttribute('data-value');
+        helperText.innerText = ratingsText[val];
+      });
+
+      star.addEventListener('mouseout', () => {
+        helperText.innerText = "Pilih bintang untuk memberikan ulasan";
+      });
+
+      star.addEventListener('click', (e) => {
+        const rating = parseInt(e.target.getAttribute('data-value'));
+        redirectUser(rating);
+      });
+    });
+
+    // Logika Pengalihan Otomatis
+    function redirectUser(rating) {
+      if (rating >= 4) {
+        // Rating 4 & 5 -> Langsung ke Google Maps Review Klien
+        window.location.href = config.gmapsUrl;
+      } else {
+        // Rating 1, 2, 3 -> Langsung ke WhatsApp Admin Klien
+        const text = encodeURIComponent(`Halo Admin ${config.businessName}, saya ingin memberikan masukan/keluhan terkait pelayanan (Rating: ${rating}/5).`);
+        window.location.href = `https://wa.me/${config.waNumber}?text=${text}`;
+      }
+    }
+  </script>
+</body>
+</html>
+    
